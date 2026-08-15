@@ -1,0 +1,103 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}代購業者管理 - GoyouLink 分潤系統{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">代購業者管理</h2>
+    <a href="{{ url_for('admin.affiliates_create') }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> 新增代購業者
+    </a>
+</div>
+
+<!-- 類型篩選 -->
+<div class="mb-3">
+    <div class="btn-group">
+        <a href="{{ url_for('admin.affiliates_list') }}" class="btn btn-outline-secondary {% if not type_filter %}active{% endif %}">全部</a>
+        <a href="{{ url_for('admin.affiliates_list', type='reseller') }}" class="btn btn-outline-primary {% if type_filter == 'reseller' %}active{% endif %}">系統租戶</a>
+        <a href="{{ url_for('admin.affiliates_list', type='affiliate') }}" class="btn btn-outline-success {% if type_filter == 'affiliate' %}active{% endif %}">一般推廣者</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if affiliates %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>名稱</th>
+                        <th>類型</th>
+                        <th>推薦碼</th>
+                        <th>短網址</th>
+                        <th>佣金比例</th>
+                        <th>訂單數</th>
+                        <th>待發放佣金</th>
+                        <th>狀態</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for affiliate in affiliates %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('admin.affiliates_detail', affiliate_id=affiliate.id) }}">
+                                <strong>{{ affiliate.name }}</strong>
+                            </a>
+                            {% if affiliate.domain %}
+                            <br><small class="text-muted">{{ affiliate.domain }}</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if affiliate.type == 'reseller' %}
+                                <span class="badge bg-primary">系統租戶</span>
+                            {% else %}
+                                <span class="badge bg-success">一般推廣者</span>
+                            {% endif %}
+                        </td>
+                        <td><code>{{ affiliate.ref_code }}</code></td>
+                        <td>
+                            <code>{{ config.SHORT_URL_DOMAIN }}/{{ affiliate.short_code }}</code>
+                            <button class="btn btn-sm btn-link p-0 ms-1" onclick="copyToClipboard('{{ config.SHORT_URL_DOMAIN }}/{{ affiliate.short_code }}')">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </td>
+                        <td>{{ affiliate.commission_rate }}%</td>
+                        <td>{{ affiliate.total_orders or 0 }}</td>
+                        <td>¥{{ "{:,.0f}".format(affiliate.pending_commission or 0) }}</td>
+                        <td>
+                            {% if affiliate.status == 'active' %}
+                                <span class="badge bg-success badge-status">啟用</span>
+                            {% else %}
+                                <span class="badge bg-secondary badge-status">停用</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('admin.affiliates_detail', affiliate_id=affiliate.id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ url_for('admin.affiliates_edit', affiliate_id=affiliate.id) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted mb-0">尚無代購業者，<a href="{{ url_for('admin.affiliates_create') }}">點此新增</a></p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        alert('已複製到剪貼簿');
+    });
+}
+</script>
+{% endblock %}

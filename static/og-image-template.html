@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        .og-image {
+            width: 1200px;
+            height: 630px;
+            background: linear-gradient(135deg, #1D3557 0%, #457B9D 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Noto Sans TC', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .og-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .content {
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo {
+            font-size: 42px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+        
+        .title {
+            font-size: 72px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .title span {
+            background: linear-gradient(135deg, #E63946 0%, #F4A261 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 32px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 40px;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #E63946 0%, #F4A261 100%);
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        .corner-decoration {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #E63946 0%, #F4A261 100%);
+            opacity: 0.3;
+        }
+        
+        .corner-top-right {
+            top: -100px;
+            right: -100px;
+            border-radius: 50%;
+        }
+        
+        .corner-bottom-left {
+            bottom: -100px;
+            left: -100px;
+            border-radius: 50%;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="og-image">
+        <div class="corner-decoration corner-top-right"></div>
+        <div class="corner-decoration corner-bottom-left"></div>
+        <div class="content">
+            <div class="logo">GOYOULINK</div>
+            <div class="title">推廣日本好物<br><span>賺取分潤佣金</span></div>
+            <div class="subtitle">加入分潤計劃，每筆訂單賺取 5% 佣金</div>
+            <div class="badge">立即加入 →</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,73 @@
+{% extends 'affiliate/base.html' %}
+
+{% block title %}推薦訂單 - GoyouLink{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">推薦訂單</h2>
+    <div class="btn-group">
+        <a href="{{ url_for('affiliate.orders') }}" class="btn btn-outline-secondary {% if not status_filter %}active{% endif %}">全部</a>
+        <a href="{{ url_for('affiliate.orders', status='pending') }}" class="btn btn-outline-warning {% if status_filter == 'pending' %}active{% endif %}">待確認</a>
+        <a href="{{ url_for('affiliate.orders', status='confirmed') }}" class="btn btn-outline-success {% if status_filter == 'confirmed' %}active{% endif %}">已確認</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if orders %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>訂單編號</th>
+                        <th>訂單金額</th>
+                        <th>佣金比例</th>
+                        <th>佣金金額</th>
+                        <th>狀態</th>
+                        <th>訂單時間</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td><strong>{{ order.order_number }}</strong></td>
+                        <td>{{ order.currency }} {{ "{:,.0f}".format(order.order_total) }}</td>
+                        <td>{{ order.commission_rate }}%</td>
+                        <td>{{ order.currency }} {{ "{:,.0f}".format(order.commission_amount) }}</td>
+                        <td>
+                            {% if order.status == 'pending' %}
+                                <span class="badge bg-warning">待確認</span>
+                                <br><small class="text-muted">等待出貨確認</small>
+                            {% elif order.status == 'confirmed' %}
+                                <span class="badge bg-success">已確認</span>
+                                <br><small class="text-muted">佣金已計入待發放</small>
+                            {% elif order.status == 'paid' %}
+                                <span class="badge bg-info">已發放</span>
+                            {% elif order.status == 'refunded' %}
+                                <span class="badge bg-danger">已退款</span>
+                                <br><small class="text-muted">佣金已扣回</small>
+                            {% elif order.status == 'cancelled' %}
+                                <span class="badge bg-secondary">已取消</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ order.order_created_at[:10] if order.order_created_at else order.created_at[:10] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="mt-4 p-3 bg-light rounded">
+            <strong>說明：</strong>
+            <ul class="mb-0 mt-2">
+                <li><span class="badge bg-warning">待確認</span> - 訂單已建立，等待出貨後確認佣金</li>
+                <li><span class="badge bg-success">已確認</span> - 訂單已出貨，佣金已計入待發放金額</li>
+                <li><span class="badge bg-danger">已退款</span> - 訂單已退款，佣金已從待發放中扣除</li>
+            </ul>
+        </div>
+        {% else %}
+        <p class="text-muted mb-0">尚無訂單記錄</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}新增佣金發放 - GoyouLink 分潤系統{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">新增佣金發放</h2>
+    <a href="{{ url_for('admin.payouts_list') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> 返回列表
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="affiliate_id" class="form-label">代購業者 <span class="text-danger">*</span></label>
+                    <select class="form-select" id="affiliate_id" name="affiliate_id" required>
+                        <option value="">請選擇</option>
+                        {% for affiliate in affiliates %}
+                        <option value="{{ affiliate.id }}" 
+                                data-pending="{{ affiliate.pending_commission }}"
+                                {% if request.args.get('affiliate_id') == affiliate.id %}selected{% endif %}>
+                            {{ affiliate.name }} - 待發放: ¥{{ "{:,.0f}".format(affiliate.pending_commission) }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label for="amount" class="form-label">發放金額 (JPY) <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" id="amount" name="amount" 
+                           min="1" step="1" required>
+                    <div class="form-text">最低發放金額: ¥{{ "{:,}".format(config.MIN_PAYOUT_JPY) }}</div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="payment_method" class="form-label">付款方式</label>
+                    <select class="form-select" id="payment_method" name="payment_method">
+                        <option value="">請選擇</option>
+                        <option value="銀行轉帳">銀行轉帳</option>
+                        <option value="PayPal">PayPal</option>
+                        <option value="LINE Pay">LINE Pay</option>
+                        <option value="現金">現金</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label for="payment_details" class="form-label">付款詳情</label>
+                    <input type="text" class="form-control" id="payment_details" name="payment_details"
+                           placeholder="例如：銀行帳號末四碼 1234">
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="note" class="form-label">備註</label>
+                <textarea class="form-control" id="note" name="note" rows="2"></textarea>
+            </div>
+            
+            <hr>
+            
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg"></i> 確認發放
+                </button>
+                <a href="{{ url_for('admin.payouts_list') }}" class="btn btn-outline-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('affiliate_id').addEventListener('change', function() {
+    const selected = this.options[this.selectedIndex];
+    const pending = selected.dataset.pending || 0;
+    document.getElementById('amount').max = pending;
+    document.getElementById('amount').placeholder = '最多 ' + parseInt(pending).toLocaleString();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'affiliate/base.html' %}
+
+{% block title %}佣金記錄 - GoyouLink{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">佣金記錄</h2>
+
+<!-- 佣金摘要 -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h6 class="text-muted mb-2">總佣金</h6>
+                <h2 class="mb-0">¥{{ "{:,.0f}".format(affiliate.total_commission) }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 border-warning">
+            <div class="card-body text-center">
+                <h6 class="text-muted mb-2">待發放</h6>
+                <h2 class="mb-0 text-warning">¥{{ "{:,.0f}".format(affiliate.pending_commission) }}</h2>
+                {% if affiliate.pending_commission >= config.MIN_PAYOUT_JPY %}
+                <span class="badge bg-success mt-2">可申請發放</span>
+                {% else %}
+                <small class="text-muted d-block mt-2">最低提領: ¥{{ "{:,}".format(config.MIN_PAYOUT_JPY) }}</small>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 border-success">
+            <div class="card-body text-center">
+                <h6 class="text-muted mb-2">已發放</h6>
+                <h2 class="mb-0 text-success">¥{{ "{:,.0f}".format(affiliate.paid_commission) }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 發放記錄 -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">發放記錄</h5>
+    </div>
+    <div class="card-body">
+        {% if payouts %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>發放金額</th>
+                        <th>付款方式</th>
+                        <th>備註</th>
+                        <th>發放時間</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payout in payouts %}
+                    <tr>
+                        <td><strong>{{ payout.currency }} {{ "{:,.0f}".format(payout.amount) }}</strong></td>
+                        <td>{{ payout.payment_method or '-' }}</td>
+                        <td>{{ payout.note or '-' }}</td>
+                        <td>{{ payout.paid_at[:10] if payout.paid_at else '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted mb-0">尚無發放記錄</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="mt-4 p-3 bg-light rounded">
+    <strong>發放說明：</strong>
+    <ul class="mb-0 mt-2">
+        <li>佣金每月結算一次</li>
+        <li>待發放金額達到 ¥{{ "{:,}".format(config.MIN_PAYOUT_JPY) }} 以上才能申請發放</li>
+        <li>如有問題請聯繫管理員</li>
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,307 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}{{ summary.affiliate.name }} - GoyouLink 分潤系統{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">
+            {{ summary.affiliate.name }}
+            {% if summary.affiliate.type == 'reseller' %}
+                <span class="badge bg-primary ms-2">系統租戶</span>
+            {% else %}
+                <span class="badge bg-success ms-2">一般推廣者</span>
+            {% endif %}
+        </h2>
+        <p class="text-muted mb-0">
+            {% if summary.affiliate.domain %}{{ summary.affiliate.domain }} · {% endif %}
+            {{ summary.affiliate.email or '無 Email' }}
+        </p>
+    </div>
+    <div>
+        <a href="{{ url_for('admin.affiliates_edit', affiliate_id=summary.affiliate.id) }}" class="btn btn-outline-primary">
+            <i class="bi bi-pencil"></i> 編輯
+        </a>
+        <a href="{{ url_for('admin.affiliates_list') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> 返回列表
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <!-- 推廣連結 -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-link-45deg"></i> 推廣連結</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted">短網址</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="{{ summary.short_url }}" readonly>
+                            <button class="btn btn-outline-secondary" onclick="copyToClipboard('{{ summary.short_url }}')">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted">推薦碼</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="{{ summary.affiliate.ref_code }}" readonly>
+                            <button class="btn btn-outline-secondary" onclick="copyToClipboard('{{ summary.affiliate.ref_code }}')">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 統計 -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="stat-card blue">
+                    <div class="stat-value">{{ summary.affiliate.total_clicks or 0 }}</div>
+                    <div class="stat-label">總點擊數</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card green">
+                    <div class="stat-value">{{ summary.affiliate.total_orders or 0 }}</div>
+                    <div class="stat-label">總訂單數</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card orange">
+                    <div class="stat-value">¥{{ "{:,.0f}".format(summary.affiliate.total_sales or 0) }}</div>
+                    <div class="stat-label">總銷售額</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card yellow">
+                    <div class="stat-value">{{ summary.affiliate.commission_rate }}%</div>
+                    <div class="stat-label">佣金比例</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted">總佣金</h6>
+                        <h3>¥{{ "{:,.0f}".format(summary.affiliate.total_commission or 0) }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card border-warning">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted">待發放</h6>
+                        <h3 class="text-warning">¥{{ "{:,.0f}".format(summary.affiliate.pending_commission or 0) }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card border-success">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted">已發放</h6>
+                        <h3 class="text-success">¥{{ "{:,.0f}".format(summary.affiliate.paid_commission or 0) }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 訂單列表 -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-cart"></i> 推薦訂單</h5>
+            </div>
+            <div class="card-body">
+                {% if orders %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>訂單編號</th>
+                                <th>金額</th>
+                                <th>佣金比例</th>
+                                <th>佣金</th>
+                                <th>狀態</th>
+                                <th>時間</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td>{{ order.order_number }}</td>
+                                <td>¥{{ "{:,.0f}".format(order.order_total) }}</td>
+                                <td>{{ order.commission_rate }}%</td>
+                                <td>¥{{ "{:,.0f}".format(order.commission_amount) }}</td>
+                                <td>
+                                    {% if order.status == 'pending' %}
+                                        <span class="badge bg-warning badge-status">待確認</span>
+                                    {% elif order.status == 'confirmed' %}
+                                        <span class="badge bg-success badge-status">已確認</span>
+                                    {% elif order.status == 'paid' %}
+                                        <span class="badge bg-info badge-status">已發放</span>
+                                    {% elif order.status == 'refunded' %}
+                                        <span class="badge bg-danger badge-status">已退款</span>
+                                    {% elif order.status == 'cancelled' %}
+                                        <span class="badge bg-secondary badge-status">已取消</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ order.created_at[:10] if order.created_at else '-' }}</td>
+                                <td>
+                                    {% if order.status == 'pending' %}
+                                    <form action="{{ url_for('admin.orders_update_status', order_id=order.id) }}" method="POST" style="display:inline;">
+                                        <input type="hidden" name="status" value="confirmed">
+                                        <button type="submit" class="btn btn-sm btn-success">確認</button>
+                                    </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">尚無推薦訂單</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 發放記錄 -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-cash"></i> 佣金發放記錄</h5>
+                {% if (summary.affiliate.pending_commission or 0) >= config.MIN_PAYOUT_JPY %}
+                <a href="{{ url_for('admin.payouts_create') }}?affiliate_id={{ summary.affiliate.id }}" class="btn btn-sm btn-success">
+                    <i class="bi bi-plus-lg"></i> 發放佣金
+                </a>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if payouts %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>金額</th>
+                                <th>付款方式</th>
+                                <th>備註</th>
+                                <th>發放時間</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for payout in payouts %}
+                            <tr>
+                                <td>¥{{ "{:,.0f}".format(payout.amount) }}</td>
+                                <td>{{ payout.payment_method or '-' }}</td>
+                                <td>{{ payout.note or '-' }}</td>
+                                <td>{{ payout.paid_at[:10] if payout.paid_at else '-' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">尚無發放記錄</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <!-- 社群媒體 -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-share"></i> 社群媒體</h5>
+            </div>
+            <div class="card-body">
+                {% if summary.affiliate.social_facebook or summary.affiliate.social_instagram or summary.affiliate.social_threads or summary.affiliate.social_youtube or summary.affiliate.social_tiktok %}
+                <div class="d-flex flex-column gap-2">
+                    {% if summary.affiliate.social_facebook %}
+                    <a href="{{ summary.affiliate.social_facebook }}" target="_blank" class="btn btn-outline-primary text-start">
+                        <i class="bi bi-facebook me-2"></i> Facebook
+                    </a>
+                    {% endif %}
+                    
+                    {% if summary.affiliate.social_instagram %}
+                    <a href="{{ summary.affiliate.social_instagram }}" target="_blank" class="btn btn-outline-danger text-start">
+                        <i class="bi bi-instagram me-2"></i> Instagram
+                    </a>
+                    {% endif %}
+                    
+                    {% if summary.affiliate.social_threads %}
+                    <a href="{{ summary.affiliate.social_threads }}" target="_blank" class="btn btn-outline-dark text-start">
+                        <i class="bi bi-threads me-2"></i> Threads
+                    </a>
+                    {% endif %}
+                    
+                    {% if summary.affiliate.social_youtube %}
+                    <a href="{{ summary.affiliate.social_youtube }}" target="_blank" class="btn btn-outline-danger text-start">
+                        <i class="bi bi-youtube me-2"></i> YouTube
+                    </a>
+                    {% endif %}
+                    
+                    {% if summary.affiliate.social_tiktok %}
+                    <a href="{{ summary.affiliate.social_tiktok }}" target="_blank" class="btn btn-outline-dark text-start">
+                        <i class="bi bi-tiktok me-2"></i> TikTok
+                    </a>
+                    {% endif %}
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">尚未設定社群媒體</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- 基本資訊 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> 基本資訊</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm mb-0">
+                    <tr>
+                        <td class="text-muted">建立時間</td>
+                        <td>{{ summary.affiliate.created_at[:10] if summary.affiliate.created_at else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">狀態</td>
+                        <td>
+                            {% if summary.affiliate.status == 'active' %}
+                                <span class="badge bg-success">啟用</span>
+                            {% else %}
+                                <span class="badge bg-secondary">停用</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">待確認訂單</td>
+                        <td>{{ summary.pending_orders_count }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">已確認訂單</td>
+                        <td>{{ summary.confirmed_orders_count }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        alert('已複製到剪貼簿');
+    });
+}
+</script>
+{% endblock %}

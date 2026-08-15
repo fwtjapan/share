@@ -1,0 +1,170 @@
+{% extends 'affiliate/base.html' %}
+
+{% block title %}分潤總覽 - GoyouLink{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">歡迎，{{ summary.affiliate.name }}</h2>
+
+<!-- 統計卡片 -->
+<div class="row mb-4">
+    <div class="col-md-3 col-6 mb-3">
+        <div class="stat-card">
+            <div class="d-flex align-items-center mb-3">
+                <div class="stat-icon blue me-3">
+                    <i class="bi bi-mouse"></i>
+                </div>
+                <div>
+                    <div class="stat-value">{{ summary.affiliate.total_clicks }}</div>
+                    <div class="stat-label">總點擊數</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6 mb-3">
+        <div class="stat-card">
+            <div class="d-flex align-items-center mb-3">
+                <div class="stat-icon green me-3">
+                    <i class="bi bi-cart-check"></i>
+                </div>
+                <div>
+                    <div class="stat-value">{{ summary.affiliate.total_orders }}</div>
+                    <div class="stat-label">總訂單數</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6 mb-3">
+        <div class="stat-card">
+            <div class="d-flex align-items-center mb-3">
+                <div class="stat-icon orange me-3">
+                    <i class="bi bi-currency-yen"></i>
+                </div>
+                <div>
+                    <div class="stat-value">¥{{ "{:,.0f}".format(summary.affiliate.total_sales) }}</div>
+                    <div class="stat-label">總銷售額</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6 mb-3">
+        <div class="stat-card">
+            <div class="d-flex align-items-center mb-3">
+                <div class="stat-icon yellow me-3">
+                    <i class="bi bi-percent"></i>
+                </div>
+                <div>
+                    <div class="stat-value">{{ summary.affiliate.commission_rate }}%</div>
+                    <div class="stat-label">佣金比例</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 佣金統計 -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h6 class="text-muted mb-2">總佣金</h6>
+                <h2 class="mb-0">¥{{ "{:,.0f}".format(summary.affiliate.total_commission) }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 border-warning">
+            <div class="card-body text-center">
+                <h6 class="text-muted mb-2">待發放</h6>
+                <h2 class="mb-0 text-warning">¥{{ "{:,.0f}".format(summary.affiliate.pending_commission) }}</h2>
+                <small class="text-muted">最低提領: ¥{{ "{:,}".format(config.MIN_PAYOUT_JPY) }}</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 border-success">
+            <div class="card-body text-center">
+                <h6 class="text-muted mb-2">已發放</h6>
+                <h2 class="mb-0 text-success">¥{{ "{:,.0f}".format(summary.affiliate.paid_commission) }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 推廣連結 -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-link-45deg"></i> 您的推廣連結</h5>
+    </div>
+    <div class="card-body">
+        <div class="link-box mb-2">
+            {{ summary.short_url }}
+        </div>
+        <button class="btn btn-primary" onclick="copyToClipboard('{{ summary.short_url }}')">
+            <i class="bi bi-clipboard"></i> 複製連結
+        </button>
+        <a href="{{ url_for('affiliate.links') }}" class="btn btn-outline-secondary">
+            查看更多連結選項
+        </a>
+    </div>
+</div>
+
+<!-- 最近訂單 -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-cart"></i> 最近推薦訂單</h5>
+        <a href="{{ url_for('affiliate.orders') }}" class="btn btn-sm btn-outline-primary">查看全部</a>
+    </div>
+    <div class="card-body">
+        {% if recent_orders %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>訂單編號</th>
+                        <th>金額</th>
+                        <th>佣金</th>
+                        <th>狀態</th>
+                        <th>時間</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in recent_orders %}
+                    <tr>
+                        <td>{{ order.order_number }}</td>
+                        <td>¥{{ "{:,.0f}".format(order.order_total) }}</td>
+                        <td>¥{{ "{:,.0f}".format(order.commission_amount) }}</td>
+                        <td>
+                            {% if order.status == 'pending' %}
+                                <span class="badge bg-warning">待確認</span>
+                            {% elif order.status == 'confirmed' %}
+                                <span class="badge bg-success">已確認</span>
+                            {% elif order.status == 'paid' %}
+                                <span class="badge bg-info">已發放</span>
+                            {% elif order.status == 'refunded' %}
+                                <span class="badge bg-danger">已退款</span>
+                            {% elif order.status == 'cancelled' %}
+                                <span class="badge bg-secondary">已取消</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ order.created_at[:10] if order.created_at else '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted mb-0">尚無推薦訂單，分享您的推廣連結來獲得佣金！</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        alert('已複製到剪貼簿！');
+    });
+}
+</script>
+{% endblock %}

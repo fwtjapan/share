@@ -1,0 +1,541 @@
+{% extends 'affiliate/base.html' %}
+
+{% block title %}推廣連結 - GoyouLink 分潤系統{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">推廣連結</h2>
+
+<!-- 各平台專屬連結 -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-share"></i> 社群平台專屬連結</h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted mb-4">每個平台使用專屬連結，方便追蹤各平台的點擊數和轉換率</p>
+        
+        <div class="row g-3">
+            <!-- Facebook -->
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-primary text-white" style="width: 120px;">
+                        <i class="bi bi-facebook me-2"></i> Facebook
+                    </span>
+                    <input type="text" class="form-control" id="link-fb" 
+                           value="{{ short_url }}?s=fb" readonly>
+                    <button class="btn btn-outline-secondary" onclick="copyLink('link-fb')">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Instagram -->
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text text-white" style="width: 120px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);">
+                        <i class="bi bi-instagram me-2"></i> Instagram
+                    </span>
+                    <input type="text" class="form-control" id="link-ig" 
+                           value="{{ short_url }}?s=ig" readonly>
+                    <button class="btn btn-outline-secondary" onclick="copyLink('link-ig')">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Threads -->
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-dark text-white" style="width: 120px;">
+                        <i class="bi bi-threads me-2"></i> Threads
+                    </span>
+                    <input type="text" class="form-control" id="link-th" 
+                           value="{{ short_url }}?s=th" readonly>
+                    <button class="btn btn-outline-secondary" onclick="copyLink('link-th')">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- YouTube -->
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-danger text-white" style="width: 120px;">
+                        <i class="bi bi-youtube me-2"></i> YouTube
+                    </span>
+                    <input type="text" class="form-control" id="link-yt" 
+                           value="{{ short_url }}?s=yt" readonly>
+                    <button class="btn btn-outline-secondary" onclick="copyLink('link-yt')">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- TikTok -->
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-dark text-white" style="width: 120px;">
+                        <i class="bi bi-tiktok me-2"></i> TikTok
+                    </span>
+                    <input type="text" class="form-control" id="link-tt" 
+                           value="{{ short_url }}?s=tt" readonly>
+                    <button class="btn btn-outline-secondary" onclick="copyLink('link-tt')">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- LINE -->
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-success text-white" style="width: 120px;">
+                        <i class="bi bi-line me-2"></i> LINE
+                    </span>
+                    <input type="text" class="form-control" id="link-li" 
+                           value="{{ short_url }}?s=li" readonly>
+                    <button class="btn btn-outline-secondary" onclick="copyLink('link-li')">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 通用連結 -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-link-45deg"></i> 通用連結</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">短網址（不追蹤來源）</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="short-url" value="{{ short_url }}" readonly>
+                    <button class="btn btn-primary" onclick="copyLink('short-url')">
+                        <i class="bi bi-clipboard"></i> 複製
+                    </button>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <label class="form-label">直接連結</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="direct-url" value="{{ direct_url }}" readonly>
+                    <button class="btn btn-outline-secondary" onclick="copyLink('direct-url')">
+                        <i class="bi bi-clipboard"></i> 複製
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 各平台點擊統計 -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-bar-chart"></i> 各平台點擊統計</h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-2 col-4">
+                <div class="text-center p-3 bg-light rounded">
+                    <i class="bi bi-facebook text-primary" style="font-size: 1.5rem;"></i>
+                    <h4 class="mt-2 mb-0">{{ source_stats.get('facebook', 0) }}</h4>
+                    <small class="text-muted">Facebook</small>
+                </div>
+            </div>
+            <div class="col-md-2 col-4">
+                <div class="text-center p-3 bg-light rounded">
+                    <i class="bi bi-instagram text-danger" style="font-size: 1.5rem;"></i>
+                    <h4 class="mt-2 mb-0">{{ source_stats.get('instagram', 0) }}</h4>
+                    <small class="text-muted">Instagram</small>
+                </div>
+            </div>
+            <div class="col-md-2 col-4">
+                <div class="text-center p-3 bg-light rounded">
+                    <i class="bi bi-threads text-dark" style="font-size: 1.5rem;"></i>
+                    <h4 class="mt-2 mb-0">{{ source_stats.get('threads', 0) }}</h4>
+                    <small class="text-muted">Threads</small>
+                </div>
+            </div>
+            <div class="col-md-2 col-4">
+                <div class="text-center p-3 bg-light rounded">
+                    <i class="bi bi-youtube text-danger" style="font-size: 1.5rem;"></i>
+                    <h4 class="mt-2 mb-0">{{ source_stats.get('youtube', 0) }}</h4>
+                    <small class="text-muted">YouTube</small>
+                </div>
+            </div>
+            <div class="col-md-2 col-4">
+                <div class="text-center p-3 bg-light rounded">
+                    <i class="bi bi-tiktok text-dark" style="font-size: 1.5rem;"></i>
+                    <h4 class="mt-2 mb-0">{{ source_stats.get('tiktok', 0) }}</h4>
+                    <small class="text-muted">TikTok</small>
+                </div>
+            </div>
+            <div class="col-md-2 col-4">
+                <div class="text-center p-3 bg-light rounded">
+                    <i class="bi bi-link-45deg text-secondary" style="font-size: 1.5rem;"></i>
+                    <h4 class="mt-2 mb-0">{{ source_stats.get('direct', 0) }}</h4>
+                    <small class="text-muted">其他</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 商品搜尋 -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-search"></i> 商品搜尋</h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted mb-3">搜尋商品，一鍵產生您的專屬推廣連結（最多顯示 20 個）</p>
+        
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="product-search" 
+                           placeholder="輸入商品名稱搜尋（例如：xgirl、神戶風月堂）" 
+                           onkeypress="if(event.key==='Enter') searchProducts()">
+                    <button class="btn btn-primary" onclick="searchProducts()">
+                        <i class="bi bi-search"></i> 搜尋
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 搜尋結果 -->
+        <div id="search-results">
+            <div id="search-loading" class="text-center py-4" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">搜尋中...</span>
+                </div>
+                <p class="mt-2 text-muted">搜尋中（商品較多可能需要幾秒）...</p>
+            </div>
+            
+            <div id="search-empty" class="text-center py-4 text-muted" style="display: none;">
+                <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                <p class="mt-2">找不到相關商品</p>
+                <p class="mb-0">
+                    <a href="{{ config.REDIRECT_TARGET }}" target="_blank" class="btn btn-outline-primary">
+                        <i class="bi bi-shop me-1"></i> 前往官網瀏覽所有商品
+                    </a>
+                </p>
+            </div>
+            
+            <div id="search-error" class="alert alert-danger" style="display: none;"></div>
+            
+            <div id="products-grid" class="row g-3"></div>
+            
+            <!-- 官網連結（搜尋有結果時顯示） -->
+            <div id="shop-link" class="text-center mt-4 pt-3 border-top" style="display: none;">
+                <p class="text-muted mb-2">找不到想要的商品？</p>
+                <a href="{{ config.REDIRECT_TARGET }}" target="_blank" class="btn btn-outline-primary">
+                    <i class="bi bi-shop me-1"></i> 前往官網瀏覽所有商品
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 手動輸入商品網址 -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-box"></i> 手動輸入商品網址</h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted mb-3">從官網複製商品網址，產生您的專屬推廣連結（會自動轉成追蹤短網址）</p>
+        
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <label class="form-label">商品網址</label>
+                <input type="url" class="form-control" id="product-url" 
+                       placeholder="例如：https://goyoutati.com/products/yokumoku-cigare">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">選擇平台</label>
+                <select class="form-select" id="product-platform">
+                    <option value="">不追蹤來源</option>
+                    <option value="fb">Facebook</option>
+                    <option value="ig">Instagram</option>
+                    <option value="th">Threads</option>
+                    <option value="yt">YouTube</option>
+                    <option value="tt">TikTok</option>
+                    <option value="li">LINE</option>
+                </select>
+            </div>
+        </div>
+        
+        <button class="btn btn-primary" onclick="generateProductLink()">
+            <i class="bi bi-magic"></i> 產生推廣連結
+        </button>
+        
+        <div id="generated-link" class="mt-3" style="display: none;">
+            <label class="form-label">您的商品推廣連結</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="generated-url" readonly>
+                <button class="btn btn-success" onclick="copyLink('generated-url')">
+                    <i class="bi bi-clipboard"></i> 複製
+                </button>
+            </div>
+            <div class="form-text text-success">
+                <i class="bi bi-check-circle me-1"></i> 此連結會自動追蹤點擊和來源
+            </div>
+        </div>
+        
+        <div id="generated-error" class="mt-3 alert alert-warning" style="display: none;">
+            <i class="bi bi-exclamation-triangle me-1"></i>
+            <span id="generated-error-text"></span>
+        </div>
+    </div>
+</div>
+
+<!-- 產生連結的 Modal -->
+<div class="modal fade" id="linkModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">商品推廣連結</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <img id="modal-product-image" src="" class="img-fluid rounded" style="max-height: 200px;">
+                </div>
+                <h6 id="modal-product-title" class="mb-3"></h6>
+                
+                <p class="text-muted mb-2">選擇要發佈的平台：</p>
+                
+                <div class="d-grid gap-2">
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary text-white" style="width: 100px;">
+                            <i class="bi bi-facebook me-1"></i> FB
+                        </span>
+                        <input type="text" class="form-control" id="modal-link-fb" readonly>
+                        <button class="btn btn-outline-secondary" onclick="copyLink('modal-link-fb')">
+                            <i class="bi bi-clipboard"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="input-group">
+                        <span class="input-group-text text-white" style="width: 100px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743);">
+                            <i class="bi bi-instagram me-1"></i> IG
+                        </span>
+                        <input type="text" class="form-control" id="modal-link-ig" readonly>
+                        <button class="btn btn-outline-secondary" onclick="copyLink('modal-link-ig')">
+                            <i class="bi bi-clipboard"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark text-white" style="width: 100px;">
+                            <i class="bi bi-threads me-1"></i> Threads
+                        </span>
+                        <input type="text" class="form-control" id="modal-link-th" readonly>
+                        <button class="btn btn-outline-secondary" onclick="copyLink('modal-link-th')">
+                            <i class="bi bi-clipboard"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="input-group">
+                        <span class="input-group-text bg-danger text-white" style="width: 100px;">
+                            <i class="bi bi-youtube me-1"></i> YT
+                        </span>
+                        <input type="text" class="form-control" id="modal-link-yt" readonly>
+                        <button class="btn btn-outline-secondary" onclick="copyLink('modal-link-yt')">
+                            <i class="bi bi-clipboard"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark text-white" style="width: 100px;">
+                            <i class="bi bi-tiktok me-1"></i> TikTok
+                        </span>
+                        <input type="text" class="form-control" id="modal-link-tt" readonly>
+                        <button class="btn btn-outline-secondary" onclick="copyLink('modal-link-tt')">
+                            <i class="bi bi-clipboard"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const refCode = '{{ affiliate.ref_code }}';
+const shortCode = '{{ affiliate.short_code }}';
+const shortUrlDomain = '{{ config.SHORT_URL_DOMAIN }}';
+const redirectTarget = '{{ config.REDIRECT_TARGET }}';
+
+function copyLink(elementId) {
+    const input = document.getElementById(elementId);
+    input.select();
+    document.execCommand('copy');
+    
+    // 顯示提示
+    const btn = input.nextElementSibling;
+    const originalHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="bi bi-check"></i>';
+    btn.classList.add('btn-success');
+    btn.classList.remove('btn-outline-secondary', 'btn-primary');
+    
+    setTimeout(() => {
+        btn.innerHTML = originalHtml;
+        btn.classList.remove('btn-success');
+        btn.classList.add('btn-outline-secondary');
+    }, 1500);
+}
+
+async function searchProducts() {
+    const query = document.getElementById('product-search').value.trim();
+    
+    if (query.length < 2) {
+        alert('請輸入至少 2 個字');
+        return;
+    }
+    
+    // 顯示載入中
+    document.getElementById('search-loading').style.display = 'block';
+    document.getElementById('search-empty').style.display = 'none';
+    document.getElementById('search-error').style.display = 'none';
+    document.getElementById('shop-link').style.display = 'none';
+    document.getElementById('products-grid').innerHTML = '';
+    
+    try {
+        const response = await fetch(`/partner/api/products/search?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        
+        document.getElementById('search-loading').style.display = 'none';
+        
+        if (data.error) {
+            document.getElementById('search-error').textContent = data.error;
+            document.getElementById('search-error').style.display = 'block';
+            return;
+        }
+        
+        if (data.products.length === 0) {
+            document.getElementById('search-empty').style.display = 'block';
+            return;
+        }
+        
+        // 顯示商品
+        const grid = document.getElementById('products-grid');
+        data.products.forEach(product => {
+            const col = document.createElement('div');
+            col.className = 'col-md-4 col-sm-6';
+            col.innerHTML = `
+                <div class="card h-100 product-card">
+                    <img src="${product.image || 'https://via.placeholder.com/300x300?text=No+Image'}" 
+                         class="card-img-top" alt="${product.title}"
+                         style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h6 class="card-title text-truncate" title="${product.title}">${product.title}</h6>
+                        <p class="card-text text-primary fw-bold">¥${Number(product.price).toLocaleString()}</p>
+                        <button class="btn btn-primary btn-sm w-100" 
+                                onclick="showProductLink('${product.handle}', '${product.title.replace(/'/g, "\\'")}', '${product.image}')">
+                            <i class="bi bi-link-45deg"></i> 產生推廣連結
+                        </button>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(col);
+        });
+        
+        // 顯示官網連結
+        document.getElementById('shop-link').style.display = 'block';
+        
+    } catch (error) {
+        document.getElementById('search-loading').style.display = 'none';
+        document.getElementById('search-error').textContent = '搜尋時發生錯誤';
+        document.getElementById('search-error').style.display = 'block';
+        console.error('Search error:', error);
+    }
+}
+
+function showProductLink(handle, title, image) {
+    const baseUrl = `${shortUrlDomain}/${shortCode}/products/${handle}`;
+    
+    document.getElementById('modal-product-title').textContent = title;
+    document.getElementById('modal-product-image').src = image || 'https://via.placeholder.com/300x300?text=No+Image';
+    document.getElementById('modal-link-fb').value = `${baseUrl}?s=fb`;
+    document.getElementById('modal-link-ig').value = `${baseUrl}?s=ig`;
+    document.getElementById('modal-link-th').value = `${baseUrl}?s=th`;
+    document.getElementById('modal-link-yt').value = `${baseUrl}?s=yt`;
+    document.getElementById('modal-link-tt').value = `${baseUrl}?s=tt`;
+    
+    const modal = new bootstrap.Modal(document.getElementById('linkModal'));
+    modal.show();
+}
+
+function generateProductLink() {
+    const productUrl = document.getElementById('product-url').value.trim();
+    const platform = document.getElementById('product-platform').value;
+    
+    document.getElementById('generated-link').style.display = 'none';
+    document.getElementById('generated-error').style.display = 'none';
+    
+    if (!productUrl) {
+        alert('請輸入商品網址');
+        return;
+    }
+    
+    // 解析商品網址，取出 path
+    try {
+        const url = new URL(productUrl);
+        const pathname = url.pathname;
+        
+        // 檢查是否是商品頁面
+        if (!pathname.includes('/products/')) {
+            document.getElementById('generated-error-text').textContent = 
+                '網址格式不正確，請輸入商品頁面網址（包含 /products/）';
+            document.getElementById('generated-error').style.display = 'block';
+            return;
+        }
+        
+        // 取出 products/xxx 的部分
+        const productsMatch = pathname.match(/\/?(products\/[^\/\?]+)/);
+        if (!productsMatch) {
+            document.getElementById('generated-error-text').textContent = 
+                '無法解析商品網址，請確認網址正確';
+            document.getElementById('generated-error').style.display = 'block';
+            return;
+        }
+        
+        const productPath = productsMatch[1];
+        
+        // 產生短網址格式（會經過追蹤系統）
+        let generatedUrl = `${shortUrlDomain}/${shortCode}/${productPath}`;
+        
+        // 加上來源追蹤
+        if (platform) {
+            generatedUrl += `?s=${platform}`;
+        }
+        
+        document.getElementById('generated-url').value = generatedUrl;
+        document.getElementById('generated-link').style.display = 'block';
+        
+    } catch (e) {
+        document.getElementById('generated-error-text').textContent = 
+            '網址格式不正確，請輸入完整網址（以 https:// 開頭）';
+        document.getElementById('generated-error').style.display = 'block';
+    }
+}
+</script>
+
+<style>
+.product-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}

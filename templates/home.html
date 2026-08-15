@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoyouLink 分潤計劃 | 與我們一起賺取佣金</title>
+    <meta name="description" content="加入 GoyouLink 分潤計劃，推廣日本精選商品，賺取 5% 佣金。簡單分享，輕鬆獲利。">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://go.goyoulink.com/">
+    <meta property="og:title" content="GoyouLink 分潤計劃 | 與我們一起賺取佣金">
+    <meta property="og:description" content="加入 GoyouLink 分潤計劃，推廣日本精選商品，賺取 5% 佣金。簡單分享，輕鬆獲利。">
+    <meta property="og:image" content="https://go.goyoulink.com/static/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://go.goyoulink.com/">
+    <meta name="twitter:title" content="GoyouLink 分潤計劃 | 與我們一起賺取佣金">
+    <meta name="twitter:description" content="加入 GoyouLink 分潤計劃，推廣日本精選商品，賺取 5% 佣金。簡單分享，輕鬆獲利。">
+    <meta name="twitter:image" content="https://go.goyoulink.com/static/og-image.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #E63946;
+            --primary-dark: #C1121F;
+            --secondary: #1D3557;
+            --accent: #F4A261;
+            --light: #F1FAEE;
+            --dark: #14213D;
+            --gradient-warm: linear-gradient(135deg, #E63946 0%, #F4A261 100%);
+            --gradient-cool: linear-gradient(135deg, #1D3557 0%, #457B9D 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans TC', 'Noto Sans JP', 'Zen Kaku Gothic New', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+        
+        /* Language Switcher */
+        .lang-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 5px;
+            background: rgba(255,255,255,0.95);
+            padding: 5px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .lang-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--dark);
+        }
+        
+        .lang-btn:hover {
+            background: rgba(0,0,0,0.05);
+        }
+        
+        .lang-btn.active {
+            background: var(--gradient-warm);
+            color: white;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: var(--gradient-cool);
+            position: relative;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+        
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-text h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            color: white;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+        
+        .hero-text h1 span {
+            background: var(--gradient-warm);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-text p {
+            font-size: 1.25rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 2rem;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: var(--gradient-warm);
+            color: white;
+            box-shadow: 0 10px 30px rgba(230, 57, 70, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(230, 57, 70, 0.5);
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.25);
+            border-color: white;
+        }
+        
+        .hero-visual {
+            position: relative;
+        }
+        
+        .hero-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+            transform: rotate(3deg);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: rotate(3deg) translateY(0); }
+            50% { transform: rotate(3deg) translateY(-20px); }
+        }
+        
+        .hero-card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .hero-card-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-warm);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .hero-card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        
+        .hero-card-subtitle {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 6rem 2rem;
+            background: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-title h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title p {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: var(--light);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient-warm);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+        
+        .feature-card p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        /* How It Works */
+        .how-it-works {
+            padding: 6rem 2rem;
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .how-it-works .section-title h2 {
+            color: white;
+        }
+        
+        .how-it-works .section-title p {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .steps {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .step:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(10px);
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-warm);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+        
+        .step-content h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-content p {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        /* Commission Section */
+        .commission {
+            padding: 6rem 2rem;
+            background: white;
+        }
+        
+        .commission-box {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--gradient-warm);
+            border-radius: 30px;
+            padding: 3rem;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .commission-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .commission-rate {
+            font-size: clamp(4rem, 10vw, 8rem);
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+        
+        .commission-rate span {
+            font-size: 0.4em;
+            vertical-align: middle;
+        }
+        
+        .commission-box h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .commission-details {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        
+        .commission-detail {
+            text-align: center;
+        }
+        
+        .commission-detail i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        /* CTA Section */
+        .cta {
+            padding: 6rem 2rem;
+            background: var(--light);
+            text-align: center;
+        }
+        
+        .cta h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+        
+        .cta p {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        
+        .contact-methods {
+            max-width: 800px;
+            margin: 3rem auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .contact-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: var(--dark);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .contact-card i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        
+        .contact-card span {
+            font-weight: 700;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .hero-visual {
+                order: -1;
+            }
+            
+            .hero-card {
+                transform: rotate(0);
+            }
+            
+            @keyframes float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
+            }
+            
+            .step {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .step:hover {
+                transform: translateY(-5px);
+            }
+            
+            .commission-details {
+                gap: 1.5rem;
+            }
+            
+            .lang-switcher {
+                top: 10px;
+                right: 10px;
+                padding: 3px;
+            }
+            
+            .lang-btn {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+        }
+        
+        /* Scroll Animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Hide inactive language */
+        [data-lang] { display: none; }
+        [data-lang].active { display: inline; }
+    </style>
+</head>
+<body>
+    <!-- Language Switcher -->
+    <div class="lang-switcher">
+        <button class="lang-btn active" data-lang-btn="zh">中文</button>
+        <button class="lang-btn" data-lang-btn="en">EN</button>
+        <button class="lang-btn" data-lang-btn="ja">日本語</button>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>
+                    <span data-lang="zh" class="active">推廣日本好物</span>
+                    <span data-lang="en">Promote Japanese Products</span>
+                    <span data-lang="ja">日本の商品を紹介して</span>
+                    <br>
+                    <span>
+                        <span data-lang="zh" class="active">賺取分潤佣金</span>
+                        <span data-lang="en">Earn Commission</span>
+                        <span data-lang="ja">報酬を獲得</span>
+                    </span>
+                </h1>
+                <p>
+                    <span data-lang="zh" class="active">加入 GoyouLink 分潤計劃，只要分享連結，每筆成交訂單都能獲得佣金。無需囤貨、無需成本，輕鬆開始您的被動收入。</span>
+                    <span data-lang="en">Join the GoyouLink affiliate program. Simply share your link and earn commission on every sale. No inventory, no cost - start your passive income today.</span>
+                    <span data-lang="ja">GoyouLinkアフィリエイトプログラムに参加しましょう。リンクをシェアするだけで、販売ごとに報酬を獲得できます。在庫不要、コスト不要で、今すぐ副収入を始めましょう。</span>
+                </p>
+                <div class="hero-buttons">
+                    <a href="#contact" class="btn btn-primary">
+                        <i class="bi bi-rocket-takeoff"></i>
+                        <span data-lang="zh" class="active">立即申請加入</span>
+                        <span data-lang="en">Apply Now</span>
+                        <span data-lang="ja">今すぐ申請</span>
+                    </a>
+                    <a href="#how-it-works" class="btn btn-secondary">
+                        <i class="bi bi-play-circle"></i>
+                        <span data-lang="zh" class="active">了解更多</span>
+                        <span data-lang="en">Learn More</span>
+                        <span data-lang="ja">詳しく見る</span>
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-card">
+                    <div class="hero-card-header">
+                        <div class="hero-card-icon">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
+                        <div>
+                            <div class="hero-card-title">
+                                <span data-lang="zh" class="active">本月佣金預覽</span>
+                                <span data-lang="en">Monthly Preview</span>
+                                <span data-lang="ja">今月の報酬</span>
+                            </div>
+                            <div class="hero-card-subtitle">
+                                <span data-lang="zh" class="active">分潤夥伴儀表板</span>
+                                <span data-lang="en">Affiliate Dashboard</span>
+                                <span data-lang="ja">アフィリエイトダッシュボード</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-stats">
+                        <div>
+                            <div class="stat-value">1,234</div>
+                            <div class="stat-label">
+                                <span data-lang="zh" class="active">總點擊數</span>
+                                <span data-lang="en">Clicks</span>
+                                <span data-lang="ja">クリック数</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="stat-value">56</div>
+                            <div class="stat-label">
+                                <span data-lang="zh" class="active">成交訂單</span>
+                                <span data-lang="en">Orders</span>
+                                <span data-lang="ja">注文数</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="stat-value">¥28,500</div>
+                            <div class="stat-label">
+                                <span data-lang="zh" class="active">預估佣金</span>
+                                <span data-lang="en">Commission</span>
+                                <span data-lang="ja">報酬</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features">
+        <div class="section-title fade-in">
+            <h2>
+                <span data-lang="zh" class="active">為什麼選擇 GoyouLink？</span>
+                <span data-lang="en">Why Choose GoyouLink?</span>
+                <span data-lang="ja">GoyouLinkを選ぶ理由</span>
+            </h2>
+            <p>
+                <span data-lang="zh" class="active">我們提供最簡單、最透明的分潤機制，讓您專注在推廣上</span>
+                <span data-lang="en">We offer the simplest and most transparent affiliate program so you can focus on promotion</span>
+                <span data-lang="ja">シンプルで透明性の高いアフィリエイトプログラムで、プロモーションに集中できます</span>
+            </p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="bi bi-percent"></i>
+                </div>
+                <h3>
+                    <span data-lang="zh" class="active">高額佣金</span>
+                    <span data-lang="en">High Commission</span>
+                    <span data-lang="ja">高額報酬</span>
+                </h3>
+                <p>
+                    <span data-lang="zh" class="active">每筆成交訂單享有 5% 佣金，業界領先的分潤比例，讓您的努力獲得應有的回報。</span>
+                    <span data-lang="en">Earn 5% commission on every sale - an industry-leading rate that rewards your efforts.</span>
+                    <span data-lang="ja">全ての販売で5%の報酬を獲得。業界トップクラスの報酬率で、あなたの努力に見合った報酬を。</span>
+                </p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <h3>
+                    <span data-lang="zh" class="active">30 天追蹤期</span>
+                    <span data-lang="en">30-Day Tracking</span>
+                    <span data-lang="ja">30日間の追跡期間</span>
+                </h3>
+                <p>
+                    <span data-lang="zh" class="active">Cookie 有效期長達 30 天，顧客只要在這期間內下單，佣金都算您的。</span>
+                    <span data-lang="en">Our cookie lasts 30 days - any purchase within this period earns you commission.</span>
+                    <span data-lang="ja">Cookieは30日間有効。この期間内の購入はすべてあなたの報酬になります。</span>
+                </p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="bi bi-bar-chart-line"></i>
+                </div>
+                <h3>
+                    <span data-lang="zh" class="active">即時數據追蹤</span>
+                    <span data-lang="en">Real-time Analytics</span>
+                    <span data-lang="ja">リアルタイム分析</span>
+                </h3>
+                <p>
+                    <span data-lang="zh" class="active">專屬後台即時查看點擊數、訂單數、佣金金額，所有數據一目瞭然。</span>
+                    <span data-lang="en">Track clicks, orders, and earnings in real-time with your dedicated dashboard.</span>
+                    <span data-lang="ja">専用ダッシュボードでクリック数、注文数、報酬をリアルタイムで確認。</span>
+                </p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="bi bi-shop"></i>
+                </div>
+                <h3>
+                    <span data-lang="zh" class="active">豐富商品線</span>
+                    <span data-lang="en">Wide Product Range</span>
+                    <span data-lang="ja">豊富な商品ラインナップ</span>
+                </h3>
+                <p>
+                    <span data-lang="zh" class="active">從日本零食伴手禮到潮流服飾，超過 3000+ 精選商品任您推廣。</span>
+                    <span data-lang="en">From Japanese snacks to fashion items, over 3000+ curated products to promote.</span>
+                    <span data-lang="ja">日本のお菓子からファッションまで、3000点以上の厳選商品をプロモーション。</span>
+                </p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="bi bi-link-45deg"></i>
+                </div>
+                <h3>
+                    <span data-lang="zh" class="active">專屬短網址</span>
+                    <span data-lang="en">Custom Short URLs</span>
+                    <span data-lang="ja">専用短縮URL</span>
+                </h3>
+                <p>
+                    <span data-lang="zh" class="active">為您產生專屬短網址，支援各社群平台追蹤，精準分析成效來源。</span>
+                    <span data-lang="en">Get your own short URLs with platform-specific tracking for precise analytics.</span>
+                    <span data-lang="ja">プラットフォーム別の追跡機能付き専用短縮URLで、正確な分析が可能。</span>
+                </p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+                <h3>
+                    <span data-lang="zh" class="active">準時發放</span>
+                    <span data-lang="en">Timely Payouts</span>
+                    <span data-lang="ja">確実な支払い</span>
+                </h3>
+                <p>
+                    <span data-lang="zh" class="active">佣金累積達 ¥20,000 即可申請提領，我們保證準時發放。</span>
+                    <span data-lang="en">Request payout once you reach ¥20,000 - we guarantee timely payments.</span>
+                    <span data-lang="ja">¥20,000に達したら出金申請可能。確実にお支払いします。</span>
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-title fade-in">
+            <h2>
+                <span data-lang="zh" class="active">如何開始？</span>
+                <span data-lang="en">How It Works</span>
+                <span data-lang="ja">始め方</span>
+            </h2>
+            <p>
+                <span data-lang="zh" class="active">只要三個步驟，立即開始賺取佣金</span>
+                <span data-lang="en">Just three simple steps to start earning</span>
+                <span data-lang="ja">3つの簡単なステップで報酬獲得を開始</span>
+            </p>
+        </div>
+        <div class="steps">
+            <div class="step fade-in">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>
+                        <span data-lang="zh" class="active">申請加入</span>
+                        <span data-lang="en">Apply</span>
+                        <span data-lang="ja">申請する</span>
+                    </h3>
+                    <p>
+                        <span data-lang="zh" class="active">透過 LINE 或 Email 聯繫我們，提供您的社群平台資訊，我們會在 24 小時內審核並開通您的分潤帳戶。</span>
+                        <span data-lang="en">Contact us via LINE or Email with your social media info. We'll review and activate your account within 24 hours.</span>
+                        <span data-lang="ja">LINEまたはメールでお問い合わせください。24時間以内に審査してアカウントを有効化します。</span>
+                    </p>
+                </div>
+            </div>
+            <div class="step fade-in">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>
+                        <span data-lang="zh" class="active">取得專屬連結</span>
+                        <span data-lang="en">Get Your Links</span>
+                        <span data-lang="ja">専用リンクを取得</span>
+                    </h3>
+                    <p>
+                        <span data-lang="zh" class="active">登入後台，獲得您的專屬推廣連結。可以為不同社群平台產生不同的追蹤連結，精準分析各平台成效。</span>
+                        <span data-lang="en">Log into your dashboard to get your unique affiliate links. Create different tracking links for each platform.</span>
+                        <span data-lang="ja">ダッシュボードにログインして専用アフィリエイトリンクを取得。プラットフォームごとに異なる追跡リンクを作成できます。</span>
+                    </p>
+                </div>
+            </div>
+            <div class="step fade-in">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>
+                        <span data-lang="zh" class="active">分享賺佣金</span>
+                        <span data-lang="en">Share & Earn</span>
+                        <span data-lang="ja">シェアして稼ぐ</span>
+                    </h3>
+                    <p>
+                        <span data-lang="zh" class="active">將連結分享到您的社群、部落格或任何平台。有人透過您的連結購買，您就能獲得 5% 佣金！</span>
+                        <span data-lang="en">Share your links on social media, blogs, or anywhere. When someone buys through your link, you earn 5%!</span>
+                        <span data-lang="ja">SNS、ブログなどでリンクをシェア。あなたのリンクから購入されると、5%の報酬を獲得！</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Commission Section -->
+    <section class="commission">
+        <div class="commission-box fade-in">
+            <div class="commission-rate">5<span>%</span></div>
+            <h3>
+                <span data-lang="zh" class="active">每筆訂單佣金</span>
+                <span data-lang="en">Commission Per Sale</span>
+                <span data-lang="ja">販売ごとの報酬</span>
+            </h3>
+            <p>
+                <span data-lang="zh" class="active">業界最高分潤比例，讓您的推廣更有價值</span>
+                <span data-lang="en">Industry-leading rates that make your promotion worthwhile</span>
+                <span data-lang="ja">業界トップクラスの報酬率で、プロモーションの価値を最大化</span>
+            </p>
+            <div class="commission-details">
+                <div class="commission-detail">
+                    <i class="bi bi-calendar-check"></i>
+                    <div>
+                        <span data-lang="zh" class="active">30 天 Cookie</span>
+                        <span data-lang="en">30-Day Cookie</span>
+                        <span data-lang="ja">30日間Cookie</span>
+                    </div>
+                </div>
+                <div class="commission-detail">
+                    <i class="bi bi-wallet2"></i>
+                    <div>
+                        <span data-lang="zh" class="active">¥20,000 起提</span>
+                        <span data-lang="en">¥20,000 Min. Payout</span>
+                        <span data-lang="ja">¥20,000から出金</span>
+                    </div>
+                </div>
+                <div class="commission-detail">
+                    <i class="bi bi-lightning-charge"></i>
+                    <div>
+                        <span data-lang="zh" class="active">即時追蹤</span>
+                        <span data-lang="en">Real-time Tracking</span>
+                        <span data-lang="ja">リアルタイム追跡</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="cta" id="contact">
+        <h2 class="fade-in">
+            <span data-lang="zh" class="active">準備好開始了嗎？</span>
+            <span data-lang="en">Ready to Get Started?</span>
+            <span data-lang="ja">始める準備はできましたか？</span>
+        </h2>
+        <p class="fade-in">
+            <span data-lang="zh" class="active">立即聯繫我們，成為 GoyouLink 分潤夥伴！</span>
+            <span data-lang="en">Contact us now to become a GoyouLink affiliate partner!</span>
+            <span data-lang="ja">今すぐお問い合わせください！GoyouLinkアフィリエイトパートナーになりましょう！</span>
+        </p>
+        <a href="https://lin.ee/uQ0Jpto" target="_blank" class="btn btn-primary fade-in">
+            <i class="bi bi-line"></i>
+            <span data-lang="zh" class="active">透過 LINE 申請</span>
+            <span data-lang="en">Apply via LINE</span>
+            <span data-lang="ja">LINEで申請</span>
+        </a>
+        <div class="contact-methods fade-in">
+            <a href="https://www.instagram.com/goyoutati/" target="_blank" class="contact-card">
+                <i class="bi bi-instagram"></i>
+                <span>Instagram</span>
+                <small>@goyoutati</small>
+            </a>
+            <a href="https://www.facebook.com/goyoutati/" target="_blank" class="contact-card">
+                <i class="bi bi-facebook"></i>
+                <span>Facebook</span>
+                <small>goyoutati</small>
+            </a>
+            <a href="mailto:omishoninjp@gmail.com" class="contact-card">
+                <i class="bi bi-envelope"></i>
+                <span>Email</span>
+                <small>omishoninjp@gmail.com</small>
+            </a>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">GoyouLink</div>
+        <div class="footer-links">
+            <a href="https://goyoutati.com" target="_blank">GOYOUTATI</a>
+            <a href="/partner">
+                <span data-lang="zh" class="active">夥伴登入</span>
+                <span data-lang="en">Partner Login</span>
+                <span data-lang="ja">パートナーログイン</span>
+            </a>
+            <a href="/admin">
+                <span data-lang="zh" class="active">管理後台</span>
+                <span data-lang="en">Admin</span>
+                <span data-lang="ja">管理画面</span>
+            </a>
+        </div>
+        <p class="copyright">© Omishonin Co., Ltd. All rights reserved.</p>
+    </footer>
+    
+    <!-- Scripts -->
+    <script>
+        // Language Switcher
+        function switchLang(lang) {
+            // Update buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.langBtn === lang);
+            });
+            
+            // Update text elements
+            document.querySelectorAll('[data-lang]').forEach(el => {
+                el.classList.toggle('active', el.dataset.lang === lang);
+            });
+            
+            // Update html lang attribute
+            const langMap = { zh: 'zh-TW', en: 'en', ja: 'ja' };
+            document.documentElement.lang = langMap[lang];
+            
+            // Save preference
+            localStorage.setItem('lang', lang);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved language or default to zh
+            const savedLang = localStorage.getItem('lang') || 'zh';
+            switchLang(savedLang);
+            
+            // Add click handlers to language buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => switchLang(btn.dataset.langBtn));
+            });
+            
+            // Scroll Animation
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Smooth scroll
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
