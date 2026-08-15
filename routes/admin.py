@@ -1,3 +1,5 @@
+import hmac
+
 from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for
 from functools import wraps
 from models import (
@@ -48,16 +50,29 @@ def admin_required(f):
 @admin_bp.route('/login', methods=['GET', 'POST'])
 def login():
     """管理員登入頁面"""
+    # 後台帳密未設定（或仍是 admin/admin）時，一律拒絕登入。
+    # 注意：這裡只擋後台，短網址導向與 Shopify webhook 完全不受影響。
+    if not Config.ADMIN_CONFIGURED:
+        return render_template(
+            'admin/login.html',
+            error='後台尚未完成設定：請在 Zeabur 環境變數設定 ADMIN_USERNAME 與 '
+                  'ADMIN_PASSWORD（不可使用 admin/admin），儲存後重新部署即可登入。'
+        ), 503
+
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        
-        if username == Config.ADMIN_USERNAME and password == Config.ADMIN_PASSWORD:
+        username = request.form.get('username') or ''
+        password = request.form.get('password') or ''
+
+        # 用 compare_digest 做常數時間比對，避免以回應時間猜密碼
+        user_ok = hmac.compare_digest(username, Config.ADMIN_USERNAME)
+        pass_ok = hmac.compare_digest(password, Config.ADMIN_PASSWORD)
+
+        if user_ok and pass_ok:
             session['admin_logged_in'] = True
             return redirect(url_for('admin.dashboard'))
         else:
             return render_template('admin/login.html', error='帳號或密碼錯誤')
-    
+
     return render_template('admin/login.html')
 
 

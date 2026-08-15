@@ -1,4 +1,6 @@
 import os
+import secrets
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -24,18 +26,23 @@ def _num(name, default, cast):
         return default
 
 
-def _require(name, hint):
-    """必填的環境變數，缺少時給出明確可行動的錯誤訊息。"""
+def _warn(name, hint):
+    """
+    缺少時大聲警告，但「不」讓服務掛掉。
+
+    設計理由：這個服務有兩條完全不需要後台帳密的關鍵路徑 ——
+    短網址導向（/<short_code>）與 Shopify webhook。
+    若因為後台帳密沒設就讓整個 container 開不起來，
+    等於顧客點推廣連結會連不上、Shopify 送來的訂單通知全部遺失，
+    那是拿金流去賭一個設定問題，代價遠大於好處。
+
+    所以改成：服務照常啟動，但把不安全的狀態明確標記出來，
+    由呼叫端（例如 admin 登入）自行拒絕。
+    """
     val = os.getenv(name)
     if not val or not val.strip():
-        raise RuntimeError(
-            f"\n"
-            f"========================================\n"
-            f"啟動失敗：環境變數 {name} 未設定\n"
-            f"{hint}\n"
-            f"請到 Zeabur 的 Environment Variables 頁面設定後重新部署。\n"
-            f"========================================\n"
-        )
+        print(f"[SECURITY WARNING] 環境變數 {name} 未設定。{hint}")
+        return None
     return val.strip()
 
 
@@ -53,14 +60,18 @@ class Config:
     SHOPIFY_WEBHOOK_SECRET = os.getenv('SHOPIFY_WEBHOOK_SECRET')
 
     # ---------- App Settings ----------
-    # 修正：原本預設值是 'dev-secret-key'，這個字串公開在 GitHub repo 裡。
+    # 原本預設值是 'dev-secret-key'，這個字串公開在 GitHub repo 裡，
     # 任何人都能用它簽出一張管理員 session cookie，完全繞過登入。
-    # 因此改成必填，沒設定就不讓服務啟動。
-    SECRET_KEY = _require(
+    #
+    # 現在改成：沒設定就「隨機產生一把」。服務照常啟動、短網址與 webhook
+    # 完全不受影響，但因為每次重新部署金鑰都不同，登入狀態會失效
+    #（需要重新登入後台）。這是安全且不會中斷服務的折衷。
+    _secret = _warn(
         'SECRET_KEY',
-        "用途：加密簽署登入 session。沒設定的話任何人都能偽造管理員登入。\n"
-        "產生方式：python3 -c \"import secrets; print(secrets.token_hex(32))\""
+        "已改用隨機金鑰，服務正常運作，但每次重新部署都需要重新登入後台。"
+        " 建議設定固定值：python3 -c \"import secrets; print(secrets.token_hex(32))\""
     )
+    SECRET_KEY = _secret or secrets.token_hex(32)
 
     DEFAULT_COMMISSION_RATE = _num('DEFAULT_COMMISSION_RATE', 5.0, float)
     COOKIE_DAYS = _num('COOKIE_DAYS', 30, lambda s: int(float(s)))
@@ -71,14 +82,23 @@ class Config:
     REDIRECT_TARGET = os.getenv('REDIRECT_TARGET', 'https://goyoutati.com').rstrip('/')
 
     # ---------- Admin ----------
-    # 修正：原本預設 admin / admin，漏設環境變數等於後台完全公開。
-    ADMIN_USERNAME = _require(
+    # 原本預設 admin / admin，漏設環境變數等於後台完全公開。
+    # 現在改成：沒設定時服務照常啟動（短網址、webhook 不受影響），
+    # 但 ADMIN_CONFIGURED 為 False，後台登入會直接拒絕並顯示設定指引。
+    ADMIN_USERNAME = _warn(
         'ADMIN_USERNAME',
-        "用途：管理後台登入帳號。請勿使用 admin。"
+        "管理後台將暫時無法登入（短網址與 webhook 不受影響）。請設定後台登入帳號。"
     )
-    ADMIN_PASSWORD = _require(
+    ADMIN_PASSWORD = _warn(
         'ADMIN_PASSWORD',
-        "用途：管理後台登入密碼。請使用高強度密碼，勿使用 admin。"
+        "管理後台將暫時無法登入（短網址與 webhook 不受影響）。請設定高強度密碼。"
+    )
+
+    # 後台是否已正確設定。刻意把 admin/admin 這組舊預設值也視為未設定，
+    # 避免有人沿用它而不自知。
+    ADMIN_CONFIGURED = bool(
+        ADMIN_USERNAME and ADMIN_PASSWORD
+        and not (ADMIN_USERNAME == 'admin' and ADMIN_PASSWORD == 'admin')
     )
 
     # ---------- 歸因設定 ----------
