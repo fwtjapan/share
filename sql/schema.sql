@@ -13,6 +13,12 @@ CREATE TABLE affiliates (
     short_code VARCHAR(20) UNIQUE NOT NULL,        -- 短網址代碼（如 abc123）
     commission_rate DECIMAL(5,2) DEFAULT 5.00,     -- 佣金比例（預設 5%）
     status VARCHAR(20) DEFAULT 'active',           -- active / inactive
+    type VARCHAR(20) DEFAULT 'affiliate',          -- affiliate（一般推廣者）/ reseller（系統租戶）
+    social_facebook TEXT,                          -- Facebook 連結
+    social_instagram TEXT,                         -- Instagram 連結
+    social_threads TEXT,                           -- Threads 連結
+    social_youtube TEXT,                           -- YouTube 連結
+    social_tiktok TEXT,                            -- TikTok 連結
     total_clicks INTEGER DEFAULT 0,                -- 總點擊數
     total_orders INTEGER DEFAULT 0,                -- 總訂單數
     total_sales DECIMAL(12,2) DEFAULT 0,           -- 總銷售額
@@ -31,6 +37,7 @@ CREATE TABLE clicks (
     user_agent TEXT,                               -- 瀏覽器資訊
     referer TEXT,                                  -- 來源頁面
     landed_url TEXT,                               -- 到達頁面
+    source VARCHAR(20),                            -- 來源平台代碼（fb/ig/threads/yt/tt/... ）
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
