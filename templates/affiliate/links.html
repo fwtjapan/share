@@ -426,28 +426,56 @@ async function searchProducts() {
         }
         
         // 顯示商品
+        // 修正（XSS）：原本用 innerHTML 把商品標題/圖片網址直接拼進 HTML 字串，
+        // 完全沒有跳脫。若 Shopify 後台的商品標題被設成
+        // <img src=x onerror="..."> 之類的內容，代購業者一搜尋到該商品，
+        // 惡意 JS 就會在他瀏覽器裡執行，可竊取其登入 session。
+        // 現在改用 createElement + textContent，瀏覽器會自動當成純文字處理。
         const grid = document.getElementById('products-grid');
         data.products.forEach(product => {
             const col = document.createElement('div');
             col.className = 'col-md-4 col-sm-6';
-            col.innerHTML = `
-                <div class="card h-100 product-card">
-                    <img src="${product.image || 'https://via.placeholder.com/300x300?text=No+Image'}" 
-                         class="card-img-top" alt="${product.title}"
-                         style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h6 class="card-title text-truncate" title="${product.title}">${product.title}</h6>
-                        <p class="card-text text-primary fw-bold">¥${Number(product.price).toLocaleString()}</p>
-                        <button class="btn btn-primary btn-sm w-100" 
-                                onclick="showProductLink('${product.handle}', '${product.title.replace(/'/g, "\\'")}', '${product.image}')">
-                            <i class="bi bi-link-45deg"></i> 產生推廣連結
-                        </button>
-                    </div>
-                </div>
-            `;
+
+            const card = document.createElement('div');
+            card.className = 'card h-100 product-card';
+
+            const img = document.createElement('img');
+            img.className = 'card-img-top';
+            img.style.height = '200px';
+            img.style.objectFit = 'cover';
+            img.alt = product.title || '';
+            // 只接受 http/https 圖片網址，擋掉 javascript: 這類 scheme
+            const safeImage = /^https?:\/\//i.test(product.image || '') ? product.image : '';
+            img.src = safeImage || 'https://placehold.co/300x300?text=No+Image';
+
+            const body = document.createElement('div');
+            body.className = 'card-body';
+
+            const title = document.createElement('h6');
+            title.className = 'card-title text-truncate';
+            title.title = product.title || '';
+            title.textContent = product.title || '';
+
+            const price = document.createElement('p');
+            price.className = 'card-text text-primary fw-bold';
+            price.textContent = '¥' + Number(product.price || 0).toLocaleString();
+
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-primary btn-sm w-100';
+            btn.textContent = '產生推廣連結';
+            btn.addEventListener('click', function () {
+                showProductLink(product.handle, product.title, safeImage);
+            });
+
+            body.appendChild(title);
+            body.appendChild(price);
+            body.appendChild(btn);
+            card.appendChild(img);
+            card.appendChild(body);
+            col.appendChild(card);
             grid.appendChild(col);
         });
-        
+
         // 顯示官網連結
         document.getElementById('shop-link').style.display = 'block';
         
@@ -460,10 +488,11 @@ async function searchProducts() {
 }
 
 function showProductLink(handle, title, image) {
-    const baseUrl = `${shortUrlDomain}/${shortCode}/products/${handle}`;
+    const baseUrl = `${shortUrlDomain}/${shortCode}/products/${encodeURIComponent(handle || '')}`;
     
-    document.getElementById('modal-product-title').textContent = title;
-    document.getElementById('modal-product-image').src = image || 'https://via.placeholder.com/300x300?text=No+Image';
+    document.getElementById('modal-product-title').textContent = title || '';
+    const safeImg = /^https?:\/\//i.test(image || '') ? image : '';
+    document.getElementById('modal-product-image').src = safeImg || 'https://placehold.co/300x300?text=No+Image';
     document.getElementById('modal-link-fb').value = `${baseUrl}?s=fb`;
     document.getElementById('modal-link-ig').value = `${baseUrl}?s=ig`;
     document.getElementById('modal-link-th').value = `${baseUrl}?s=th`;

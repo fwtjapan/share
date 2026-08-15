@@ -254,9 +254,15 @@ def links():
     """推廣連結頁面"""
     affiliate_id = session.get('affiliate_id')
     affiliate = get_affiliate_by_id(affiliate_id)
-    
-    short_url = f"{Config.SHORT_URL_DOMAIN}/{affiliate['short_code']}"
-    direct_url = f"{Config.REDIRECT_TARGET}?ref={affiliate['ref_code']}"
+
+    # 修正：原本沒有 None 檢查（同檔案的 dashboard()、profile() 都有，只有這裡漏了）。
+    # 當管理員刪掉該業者、或 Supabase 瞬間連線異常時（例外被 except 吞掉回傳 None），
+    # 下一行的 affiliate['short_code'] 會丟 TypeError 造成 500。
+    if not affiliate:
+        return redirect(url_for('affiliate.logout'))
+
+    short_url = f"{Config.SHORT_URL_DOMAIN}/{affiliate.get('short_code', '')}"
+    direct_url = f"{Config.REDIRECT_TARGET}?ref={affiliate.get('ref_code', '')}"
     
     source_stats = get_clicks_by_source(affiliate_id)
     

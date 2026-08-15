@@ -12,6 +12,12 @@
 
 <div class="card">
     <div class="card-body">
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+        </div>
+        {% endif %}
+
         <form method="POST">
             <div class="row">
                 <div class="col-md-6 mb-3">
@@ -20,9 +26,9 @@
                         <option value="">請選擇</option>
                         {% for affiliate in affiliates %}
                         <option value="{{ affiliate.id }}" 
-                                data-pending="{{ affiliate.pending_commission }}"
+                                data-pending="{{ affiliate.pending_commission or 0 }}"
                                 {% if request.args.get('affiliate_id') == affiliate.id %}selected{% endif %}>
-                            {{ affiliate.name }} - 待發放: ¥{{ "{:,.0f}".format(affiliate.pending_commission) }}
+                            {{ affiliate.name }} - 待發放: ¥{{ "{:,.0f}".format(affiliate.pending_commission or 0) }}
                         </option>
                         {% endfor %}
                     </select>

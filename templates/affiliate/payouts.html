@@ -11,7 +11,7 @@
         <div class="card h-100">
             <div class="card-body text-center">
                 <h6 class="text-muted mb-2">總佣金</h6>
-                <h2 class="mb-0">¥{{ "{:,.0f}".format(affiliate.total_commission) }}</h2>
+                <h2 class="mb-0">¥{{ "{:,.0f}".format(affiliate.total_commission or 0) }}</h2>
             </div>
         </div>
     </div>
@@ -19,8 +19,8 @@
         <div class="card h-100 border-warning">
             <div class="card-body text-center">
                 <h6 class="text-muted mb-2">待發放</h6>
-                <h2 class="mb-0 text-warning">¥{{ "{:,.0f}".format(affiliate.pending_commission) }}</h2>
-                {% if affiliate.pending_commission >= config.MIN_PAYOUT_JPY %}
+                <h2 class="mb-0 text-warning">¥{{ "{:,.0f}".format(affiliate.pending_commission or 0) }}</h2>
+                {% if (affiliate.pending_commission or 0) >= config.MIN_PAYOUT_JPY %}
                 <span class="badge bg-success mt-2">可申請發放</span>
                 {% else %}
                 <small class="text-muted d-block mt-2">最低提領: ¥{{ "{:,}".format(config.MIN_PAYOUT_JPY) }}</small>
@@ -32,7 +32,7 @@
         <div class="card h-100 border-success">
             <div class="card-body text-center">
                 <h6 class="text-muted mb-2">已發放</h6>
-                <h2 class="mb-0 text-success">¥{{ "{:,.0f}".format(affiliate.paid_commission) }}</h2>
+                <h2 class="mb-0 text-success">¥{{ "{:,.0f}".format(affiliate.paid_commission or 0) }}</h2>
             </div>
         </div>
     </div>

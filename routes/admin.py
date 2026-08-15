@@ -11,6 +11,26 @@ from config import Config
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 
+def _parse_number(raw, default=None, cast=float):
+    """
+    安全解析表單送來的數字。
+
+    修正：原本寫 float(request.form.get('commission_rate', 5))。
+    表單欄位存在但值是空字串時，.get() 的預設值 5 完全不會生效，
+    float('') 直接丟 ValueError 造成 500 —— 使用者按儲存後看到
+    「伺服器錯誤」頁，剛編輯的內容全部遺失，且不知道是哪個欄位有問題。
+    """
+    if raw is None:
+        return default
+    raw = str(raw).strip().replace(',', '').replace('%', '')
+    if not raw:
+        return default
+    try:
+        return cast(raw)
+    except (ValueError, TypeError):
+        return default
+
+
 def admin_required(f):
     """管理員登入驗證裝飾器"""
     @wraps(f)
@@ -94,10 +114,8 @@ def affiliates_create():
         social_youtube = request.form.get('social_youtube') or None
         social_tiktok = request.form.get('social_tiktok') or None
         
-        if commission_rate:
-            commission_rate = float(commission_rate)
-        else:
-            commission_rate = None
+        # 修正：原本 float(commission_rate) 對 'abc' 這類非數字輸入會 500
+        commission_rate = _parse_number(commission_rate, default=None, cast=float)
         
         affiliate = create_affiliate(
             name=name,
@@ -150,7 +168,11 @@ def affiliates_edit(affiliate_id):
             'name': request.form.get('name'),
             'email': request.form.get('email'),
             'domain': request.form.get('domain'),
-            'commission_rate': float(request.form.get('commission_rate', 5)),
+            # 修正：清空佣金比例欄位再儲存會 500（float('') → ValueError）
+            'commission_rate': _parse_number(
+                request.form.get('commission_rate'),
+                default=affiliate.get('commission_rate', Config.DEFAULT_COMMISSION_RATE),
+                cast=float),
             'status': request.form.get('status', 'active'),
             'type': request.form.get('type', 'affiliate'),
             # 社群媒體
@@ -207,27 +229,39 @@ def payouts_list():
 @admin_required
 def payouts_create():
     """建立發放記錄"""
+    error = None
+
     if request.method == 'POST':
         affiliate_id = request.form.get('affiliate_id')
-        amount = float(request.form.get('amount', 0))
+        # 修正：原本 float(request.form.get('amount', 0))，送出空值或非數字直接 500
+        amount = _parse_number(request.form.get('amount'), default=0, cast=float)
         payment_method = request.form.get('payment_method')
         payment_details = request.form.get('payment_details')
         note = request.form.get('note')
-        
-        if affiliate_id and amount > 0:
-            payout = create_payout(
+
+        if not affiliate_id:
+            error = '請選擇代購業者'
+        elif amount <= 0:
+            error = '請輸入正確的發放金額'
+        elif amount < Config.MIN_PAYOUT_JPY:
+            # 修正：最低發放金額原本只是畫面上的文字說明，伺服器端完全沒檢查
+            error = f'發放金額未達最低門檻 ¥{Config.MIN_PAYOUT_JPY:,}'
+        else:
+            # create_payout 會在伺服器端驗證金額不得超過待發放餘額
+            payout, err = create_payout(
                 affiliate_id=affiliate_id,
                 amount=amount,
                 payment_method=payment_method,
                 payment_details=payment_details,
                 note=note
             )
-            
             if payout:
                 return redirect(url_for('admin.payouts_list'))
-    
+            error = err or '建立發放記錄失敗'
+
     affiliates = get_all_affiliates(status='active')
-    return render_template('admin/payout_form.html', affiliates=affiliates, config=Config)
+    return render_template('admin/payout_form.html', affiliates=affiliates,
+                           config=Config, error=error)
 
 
 # ============================================
