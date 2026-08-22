@@ -1,0 +1,257 @@
+{% extends 'affiliate/base.html' %}
+
+{% block title %}使用說明 - GoyouLink{% endblock %}
+
+{% block content %}
+<style>
+    .help h2 {
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin: 2.2rem 0 .9rem;
+        padding-bottom: .5rem;
+        border-bottom: 2px solid #0d6efd;
+        color: #0a3d8f;
+    }
+    .help h2:first-child { margin-top: 0; }
+    .help .step {
+        display: flex;
+        gap: .9rem;
+        align-items: flex-start;
+        padding: .85rem 0;
+        border-bottom: 1px solid #eef1f5;
+    }
+    .help .step:last-child { border-bottom: 0; }
+    .help .num {
+        flex: 0 0 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #0d6efd;
+        color: #fff;
+        font-weight: 700;
+        font-size: .9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .help .step-body { flex: 1; }
+    .help .step-body strong { display: block; margin-bottom: .15rem; }
+    .help .step-body span { color: #5a6472; font-size: .92rem; }
+    .help code {
+        background: #f1f4f8;
+        padding: .12rem .4rem;
+        border-radius: 4px;
+        color: #0a58ca;
+        font-size: .9em;
+    }
+    .help .tip {
+        background: #fff8e1;
+        border-left: 4px solid #f0ad4e;
+        padding: .8rem 1rem;
+        border-radius: 6px;
+        margin: 1rem 0;
+        font-size: .93rem;
+    }
+    .help table td { vertical-align: middle; }
+    @media print {
+        .navbar, .no-print { display: none !important; }
+        .help h2 { break-after: avoid; }
+    }
+</style>
+
+<div class="help">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1">使用說明</h1>
+            <p class="text-muted mb-0">三分鐘看完，開始賺取佣金</p>
+        </div>
+        <button class="btn btn-outline-secondary no-print" onclick="window.print()">
+            <i class="bi bi-printer"></i> 列印
+        </button>
+    </div>
+
+    <!-- 一分鐘上手 -->
+    <h2>一、一分鐘上手</h2>
+    <div class="card"><div class="card-body py-2">
+        <div class="step">
+            <div class="num">1</div>
+            <div class="step-body">
+                <strong>登入</strong>
+                <span>用管理員給你的<b>推薦碼</b>登入，不需要密碼。</span>
+            </div>
+        </div>
+        <div class="step">
+            <div class="num">2</div>
+            <div class="step-body">
+                <strong>複製你的專屬連結</strong>
+                <span>到「推廣連結」頁，複製一條連結。</span>
+            </div>
+        </div>
+        <div class="step">
+            <div class="num">3</div>
+            <div class="step-body">
+                <strong>貼到你的貼文或限動</strong>
+                <span>Facebook、Instagram、Threads、YouTube、TikTok、LINE 都可以。</span>
+            </div>
+        </div>
+        <div class="step">
+            <div class="num">4</div>
+            <div class="step-body">
+                <strong>有人透過你的連結下單，你就有佣金</strong>
+                <span>訂單和佣金會自動出現在你的後台，不用回報。</span>
+            </div>
+        </div>
+    </div></div>
+
+    <!-- 四個頁面 -->
+    <h2>二、四個頁面在做什麼</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered mb-0">
+            <thead class="table-light">
+                <tr><th style="width:150px;">頁面</th><th>看什麼</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><i class="bi bi-speedometer2 text-primary me-1"></i> <b>儀表板</b></td>
+                    <td>你的整體成績：多少人點過、成交幾筆、賺了多少。</td>
+                </tr>
+                <tr>
+                    <td><i class="bi bi-link-45deg text-primary me-1"></i> <b>推廣連結</b></td>
+                    <td>拿連結的地方。可以拿整間店的連結，也可以搜尋單一商品產生連結。</td>
+                </tr>
+                <tr>
+                    <td><i class="bi bi-cart text-primary me-1"></i> <b>推薦訂單</b></td>
+                    <td>透過你成交的每一筆訂單，和各自的佣金、狀態。</td>
+                </tr>
+                <tr>
+                    <td><i class="bi bi-cash text-primary me-1"></i> <b>佣金記錄</b></td>
+                    <td>已經領到多少、還有多少可以領。</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 拿連結 -->
+    <h2>三、怎麼拿推廣連結</h2>
+
+    <p class="mb-2"><b>要推整間店</b> → 「推廣連結」頁上方，選你要發的平台，按複製。</p>
+    <p class="mb-3"><b>要推某個商品</b> → 同一頁往下捲，兩種方法：</p>
+
+    <div class="row g-3 mb-3">
+        <div class="col-md-6">
+            <div class="card h-100"><div class="card-body">
+                <h6 class="fw-bold"><i class="bi bi-search me-1"></i> 商品搜尋</h6>
+                <p class="mb-0 small text-muted">
+                    輸入商品名稱（至少 2 個字）→ 按「產生推廣連結」→ 選平台複製。
+                </p>
+            </div></div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100"><div class="card-body">
+                <h6 class="fw-bold"><i class="bi bi-box me-1"></i> 貼商品網址</h6>
+                <p class="mb-0 small text-muted">
+                    從官網複製商品頁網址貼上 → 選平台 → 按「產生推廣連結」。
+                </p>
+            </div></div>
+        </div>
+    </div>
+
+    <div class="tip">
+        <b>為什麼每個平台要用不同連結？</b><br>
+        連結都會到同一個商品頁，佣金算法也完全一樣。差別是系統會幫你分開統計，
+        你可以在「推廣連結」頁看到哪個平台帶來的點擊最多，知道該把力氣放在哪。
+    </div>
+
+    <!-- 佣金怎麼算 -->
+    <h2>四、佣金怎麼算、什麼時候拿得到</h2>
+
+    <div class="table-responsive mb-3">
+        <table class="table table-bordered mb-0">
+            <tbody>
+                <tr>
+                    <td class="table-light" style="width:150px;"><b>算多少</b></td>
+                    <td>訂單金額 × 你的佣金比例（在「個人資料」可以看到你的比例）。</td>
+                </tr>
+                <tr>
+                    <td class="table-light"><b>什麼時候算</b></td>
+                    <td>客人下單後先記錄，<b>等商品出貨</b>才正式計入你的佣金。</td>
+                </tr>
+                <tr>
+                    <td class="table-light"><b>什麼時候領</b></td>
+                    <td>每月結算一次，待發放金額達到門檻後由管理員撥款。</td>
+                </tr>
+                <tr>
+                    <td class="table-light"><b>退款怎麼辦</b></td>
+                    <td>客人退款的話，那筆佣金會扣回去。部分退款就只扣對應的部分。</td>
+                </tr>
+                <tr>
+                    <td class="table-light"><b>追蹤多久</b></td>
+                    <td>客人點過你的連結後，一段時間內再回來買，一樣算你的。</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p class="mb-2"><b>訂單的四種狀態：</b></p>
+    <div class="table-responsive">
+        <table class="table table-bordered mb-0">
+            <tbody>
+                <tr>
+                    <td style="width:110px;"><span class="badge bg-warning">待確認</span></td>
+                    <td>客人下單了，等出貨。這時佣金還沒算進去。</td>
+                </tr>
+                <tr>
+                    <td><span class="badge bg-success">已確認</span></td>
+                    <td>已出貨，佣金正式進到你的「待發放」。</td>
+                </tr>
+                <tr>
+                    <td><span class="badge bg-info">已發放</span></td>
+                    <td>這筆的錢已經付給你了。</td>
+                </tr>
+                <tr>
+                    <td><span class="badge bg-danger">已退款</span></td>
+                    <td>客人退貨，佣金扣回。</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 常見問題 -->
+    <h2>五、常見問題</h2>
+    <div class="accordion" id="faq">
+        {% set faqs = [
+            ('忘記推薦碼了怎麼辦？', '直接聯繫管理員，他可以幫你查。'),
+            ('客人說點連結沒反應？', '請他換一個瀏覽器或關掉廣告攔截器再試一次。如果還是不行，把那條連結傳給管理員。'),
+            ('客人明明買了，為什麼沒看到訂單？', '先確認他是不是真的從你的連結進去的。如果他是先點你的連結、後來自己搜尋進官網買，可能就沒被記錄到。有疑問請聯繫管理員協助查詢。'),
+            ('可以自己改佣金比例嗎？', '不行，比例由管理員設定。有需要可以跟管理員討論。'),
+            ('我可以同時在很多平台推嗎？', '當然可以，而且建議每個平台用各自專屬的連結，這樣才能看出哪裡效果最好。'),
+            ('連結可以縮短或美化嗎？', '你拿到的已經是短網址了。也可以再丟到其他縮網址服務，但那樣系統就分不出來源平台了。'),
+            ('要自己回報成交嗎？', '完全不用，系統會自動記錄。'),
+        ] %}
+        {% for q, a in faqs %}
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#faq{{ loop.index }}">
+                    {{ q }}
+                </button>
+            </h2>
+            <div id="faq{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#faq">
+                <div class="accordion-body text-muted">{{ a }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- 需要協助 -->
+    <h2>六、需要協助</h2>
+    <div class="card"><div class="card-body">
+        <p class="mb-0">
+            操作上有任何問題，或是覺得數字怪怪的，直接聯繫管理員即可。
+            聯繫時如果能附上<b>訂單編號</b>或<b>你使用的連結</b>，會查得比較快。
+        </p>
+    </div></div>
+
+    <p class="text-center text-muted mt-4 mb-0"><small>GoyouLink 分潤系統</small></p>
+</div>
+{% endblock %}
