@@ -3,7 +3,7 @@ from functools import wraps
 from models import (
     get_affiliate_by_ref_code, get_affiliate_by_id, update_affiliate,
     get_orders_by_affiliate, get_payouts_by_affiliate, get_clicks_by_affiliate,
-    get_affiliate_summary, get_clicks_by_source
+    get_affiliate_summary, get_clicks_by_source, normalize_url
 )
 from config import Config
 import requests
@@ -233,16 +233,22 @@ def profile():
         return redirect(url_for('affiliate.logout'))
     
     if request.method == 'POST':
-        update_data = {
-            'email': request.form.get('email') or None,
-            'social_facebook': request.form.get('social_facebook') or None,
-            'social_instagram': request.form.get('social_instagram') or None,
-            'social_threads': request.form.get('social_threads') or None,
-            'social_youtube': request.form.get('social_youtube') or None,
-            'social_tiktok': request.form.get('social_tiktok') or None
-        }
-        
-        update_affiliate(affiliate_id, **update_data)
+        # 【重要修正】原本這裡無條件寫入五個社群欄位，但 profile.html 的表單
+        # 根本沒有這些輸入框 —— request.form.get() 一律回傳 None，
+        # 結果是「代購業者每次儲存個人資料，管理員幫他設定的社群連結就全被清空」。
+        # 現在改成：只更新表單實際有送出的欄位，沒送出的一律不動。
+        update_data = {}
+
+        if 'email' in request.form:
+            update_data['email'] = (request.form.get('email') or '').strip() or None
+
+        for field in ('social_facebook', 'social_instagram', 'social_threads',
+                      'social_youtube', 'social_tiktok'):
+            if field in request.form:
+                update_data[field] = normalize_url(request.form.get(field))
+
+        if update_data:
+            update_affiliate(affiliate_id, **update_data)
         
         affiliate = get_affiliate_by_id(affiliate_id)
         return render_template('affiliate/profile.html', affiliate=affiliate, success=True)

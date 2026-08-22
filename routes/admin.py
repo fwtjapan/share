@@ -7,7 +7,7 @@ from models import (
     get_all_affiliates, get_affiliate_by_id, create_affiliate, update_affiliate,
     get_all_orders, update_order_status,
     get_all_payouts, create_payout,
-    get_dashboard_stats, get_affiliate_summary
+    get_dashboard_stats, get_affiliate_summary, normalize_url
 )
 from config import Config
 
@@ -124,11 +124,13 @@ def affiliates_create():
         affiliate_type = request.form.get('type', 'affiliate')
         
         # 社群媒體
-        social_facebook = request.form.get('social_facebook') or None
-        social_instagram = request.form.get('social_instagram') or None
-        social_threads = request.form.get('social_threads') or None
-        social_youtube = request.form.get('social_youtube') or None
-        social_tiktok = request.form.get('social_tiktok') or None
+        # 社群欄位全部選填。normalize_url 會把空字串與字串 'None' 轉成 NULL，
+        # 並自動補上 https://（表單已改為 type="text"，允許不填完整網址）
+        social_facebook = normalize_url(request.form.get('social_facebook'))
+        social_instagram = normalize_url(request.form.get('social_instagram'))
+        social_threads = normalize_url(request.form.get('social_threads'))
+        social_youtube = normalize_url(request.form.get('social_youtube'))
+        social_tiktok = normalize_url(request.form.get('social_tiktok'))
         
         # 修正：原本 float(commission_rate) 對 'abc' 這類非數字輸入會 500
         commission_rate = _parse_number(commission_rate, default=None, cast=float)
@@ -192,11 +194,11 @@ def affiliates_edit(affiliate_id):
             'status': request.form.get('status', 'active'),
             'type': request.form.get('type', 'affiliate'),
             # 社群媒體
-            'social_facebook': request.form.get('social_facebook') or None,
-            'social_instagram': request.form.get('social_instagram') or None,
-            'social_threads': request.form.get('social_threads') or None,
-            'social_youtube': request.form.get('social_youtube') or None,
-            'social_tiktok': request.form.get('social_tiktok') or None
+            'social_facebook': normalize_url(request.form.get('social_facebook')),
+            'social_instagram': normalize_url(request.form.get('social_instagram')),
+            'social_threads': normalize_url(request.form.get('social_threads')),
+            'social_youtube': normalize_url(request.form.get('social_youtube')),
+            'social_tiktok': normalize_url(request.form.get('social_tiktok'))
         }
         
         update_affiliate(affiliate_id, **update_data)

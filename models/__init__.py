@@ -39,6 +39,26 @@ def _money(value):
         return 0
 
 
+def normalize_url(value):
+    """
+    把使用者填的社群網址正規化。
+
+    社群欄位全部是選填。表單改用 type="text"（原本是 type="url"，
+    瀏覽器會擋掉沒有 https:// 的輸入，等於變相必填），
+    所以在伺服器端補上 scheme，避免存進資料庫的是無法點擊的相對網址。
+
+    空值一律回傳 None，讓資料庫存 NULL 而不是空字串。
+    """
+    if value is None:
+        return None
+    v = str(value).strip()
+    if not v or v.lower() == 'none':
+        return None
+    if not v.startswith(('http://', 'https://')):
+        v = 'https://' + v.lstrip('/')
+    return v
+
+
 # ============================================
 # Affiliate（代購業者）操作
 # ============================================
