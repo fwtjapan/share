@@ -1,0 +1,68 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}系統診斷 - GoyouLink 分潤系統{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">系統診斷</h2>
+    <button class="btn btn-outline-primary" onclick="location.reload()">
+        <i class="bi bi-arrow-clockwise"></i> 重新檢測
+    </button>
+</div>
+
+<p class="text-muted">
+    這頁會實際測試各項連線與設定，把平常「靜默失敗」的問題攤開來。
+    如果某個功能怪怪的（例如商品搜尋找不到東西、訂單沒進來），先看這裡。
+</p>
+
+{% set failed = checks | rejectattr('ok') | list %}
+{% if failed %}
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    有 <strong>{{ failed | length }}</strong> 項需要處理，詳見下方紅色項目。
+</div>
+{% else %}
+<div class="alert alert-success">
+    <i class="bi bi-check-circle me-2"></i> 全部檢查通過。
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th style="width: 90px;">狀態</th>
+                    <th style="width: 260px;">項目</th>
+                    <th>說明</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in checks %}
+                <tr class="{% if not c.ok %}table-danger{% endif %}">
+                    <td>
+                        {% if c.ok %}
+                            <span class="badge bg-success">正常</span>
+                        {% else %}
+                            <span class="badge bg-danger">異常</span>
+                        {% endif %}
+                    </td>
+                    <td><strong>{{ c.name }}</strong></td>
+                    <td><small>{{ c.detail }}</small></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="mt-4 p-3 bg-light rounded">
+    <strong>環境變數設定位置</strong>
+    <p class="mb-0 mt-2 text-muted">
+        <small>
+            Zeabur → 你的服務 → Variables（環境變數）。修改後需要等重新部署完成才會生效。
+            Supabase 的資料表設定（例如 RLS）則是改完立即生效，不需要重新部署。
+        </small>
+    </p>
+</div>
+{% endblock %}

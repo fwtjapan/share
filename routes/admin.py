@@ -1,4 +1,5 @@
 import hmac
+import os
 
 from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for
 from functools import wraps
@@ -282,6 +283,75 @@ def payouts_create():
 # ============================================
 # API endpoints（給前端 AJAX 用）
 # ============================================
+
+@admin_bp.route('/diagnostics')
+@admin_required
+def diagnostics():
+    """
+    系統診斷頁：一次看出各項外部連線與設定是否正常。
+
+    加這頁的原因：這個系統的失敗大多是「靜默」的 —— 環境變數沒設、
+    token 失效、權限不足，畫面上通通只會顯示「找不到資料」，
+    完全無法判斷問題出在哪。這頁把真正的狀態攤開來。
+    """
+    from models import get_supabase
+    from routes.affiliate import search_shopify_graphql, SHOPIFY_API_VERSION
+
+    checks = []
+
+    def add(name, ok, detail):
+        checks.append({'name': name, 'ok': ok, 'detail': detail})
+
+    # --- Supabase ---
+    try:
+        db = get_supabase()
+        if db is None:
+            add('Supabase 連線', False, 'SUPABASE_URL / SUPABASE_KEY 未設定')
+        else:
+            db.table('affiliates').select('id', count='exact').execute()
+            add('Supabase 連線', True, '正常，可讀寫 affiliates 資料表')
+    except Exception as e:
+        add('Supabase 連線', False, f'{e}')
+
+    # --- Shopify ---
+    if not Config.SHOPIFY_SHOP_DOMAIN:
+        add('Shopify 商店網域', False, 'SHOPIFY_SHOP_DOMAIN 未設定')
+    else:
+        add('Shopify 商店網域', True, Config.SHOPIFY_SHOP_DOMAIN)
+
+    if not Config.SHOPIFY_ACCESS_TOKEN:
+        add('Shopify Access Token', False, 'SHOPIFY_ACCESS_TOKEN 未設定')
+    else:
+        tok = Config.SHOPIFY_ACCESS_TOKEN
+        add('Shopify Access Token', True,
+            f'已設定（{tok[:6]}…{tok[-4:]}，共 {len(tok)} 字元）')
+
+    products, err = search_shopify_graphql('a', max_results=1)
+    add(f'Shopify 商品查詢 (API {SHOPIFY_API_VERSION})',
+        err is None, err or f'正常，測試查詢回傳 {len(products)} 筆')
+
+    # --- Webhook ---
+    add('Shopify Webhook 簽章驗證',
+        bool(Config.SHOPIFY_WEBHOOK_SECRET),
+        '已啟用' if Config.SHOPIFY_WEBHOOK_SECRET
+        else 'SHOPIFY_WEBHOOK_SECRET 未設定 —— 所有 webhook 會被拒絕，訂單不會進來')
+
+    # --- 其他設定 ---
+    add('後台帳密', Config.ADMIN_CONFIGURED,
+        '已設定' if Config.ADMIN_CONFIGURED else '未設定或仍是 admin/admin')
+    add('SECRET_KEY', bool(os.getenv('SECRET_KEY')),
+        '已設定固定值' if os.getenv('SECRET_KEY')
+        else '未設定，使用隨機金鑰（每次重新部署都要重新登入）')
+    add('短網址網域', True, Config.SHORT_URL_DOMAIN)
+    add('導向目標網站', True, Config.REDIRECT_TARGET)
+    add('預設佣金比例', True, f'{Config.DEFAULT_COMMISSION_RATE}%')
+    add('最低發放金額', True, f'¥{Config.MIN_PAYOUT_JPY:,}')
+    add('折扣碼歸因', True,
+        '已啟用（注意：可能造成佣金誤發）' if Config.ENABLE_DISCOUNT_CODE_ATTRIBUTION
+        else '已停用（建議）')
+
+    return render_template('admin/diagnostics.html', checks=checks)
+
 
 @admin_bp.route('/api/stats')
 @admin_required

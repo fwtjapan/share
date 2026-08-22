@@ -111,6 +111,11 @@
                     <i class="bi bi-cash"></i> 佣金發放
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'admin.diagnostics' %}active{% endif %}" href="{{ url_for('admin.diagnostics') }}">
+                    <i class="bi bi-heart-pulse"></i> 系統診斷
+                </a>
+            </li>
             <li class="nav-item mt-4">
                 <a class="nav-link" href="{{ url_for('admin.logout') }}">
                     <i class="bi bi-box-arrow-left"></i> 登出
