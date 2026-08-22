@@ -1,4 +1,4 @@
-import re
+from urllib.parse import quote
 
 from flask import Blueprint, redirect, request
 from models import get_affiliate_by_short_code, record_click
@@ -28,21 +28,41 @@ _IGNORED_PATHS = {
     'manifest.json', 'sw.js', 'ads.txt', '.well-known',
 }
 
-# 修正：product_path 原本未經任何驗證就接到 REDIRECT_TARGET 後面，
-# 實測 /ab/%09//evil.com 和 /ab/..%2f..%2fevil.com 都會出現在 Location 標頭，
-# 可用於釣魚（顯示你的短網址卻導去別的路徑）。
-# 現在只允許安全的路徑字元，且不允許 // 或 .. 這類逃逸序列。
-_SAFE_PATH = re.compile(r'^[A-Za-z0-9\-._~/]+$')
+# product_path 若未經驗證就接到 REDIRECT_TARGET 後面，可以用
+# /ab/%09//evil.com 或 /ab/..%2f..%2fevil.com 讓 Location 標頭指向非預期位置，
+# 用於釣魚（顯示你的短網址卻導去別的路徑）。
+#
+# 【重要修正】先前這裡用字元白名單 ^[A-Za-z0-9\-._~/]+$ 做檢查，
+# 但這個商店的商品 handle 幾乎都是中文（例如 products/日本龍角散直服-顆粒-境內版），
+# Flask 會先把網址解碼再交給路由，中文字元不在白名單內 —— 結果是
+# 「每一個商品推廣連結都被擋掉，一律退回首頁」，等於整個商品連結功能全毀。
+#
+# 改用結構性檢查：不限制字元集（Unicode 一律放行），只擋真正危險的樣式，
+# 並在組網址時用 quote() 重新做正確的百分比編碼。
+_CONTROL_CHARS = {chr(i) for i in range(32)} | {chr(127)}
 
 
 def _is_safe_product_path(path: str) -> bool:
-    if not path or len(path) > 200:
+    """只擋路徑逃逸與偽造網址，不限制語言字元。"""
+    if not path or len(path) > 300:
         return False
-    if not _SAFE_PATH.match(path):
+    # 路徑逃逸 / protocol-relative / Windows 路徑分隔
+    if '..' in path or '//' in path or path.startswith('/') or '\\' in path:
         return False
-    if '..' in path or '//' in path or path.startswith('/'):
+    # 控制字元（含 %09 這類，解碼後會是 tab）
+    if any(ch in _CONTROL_CHARS for ch in path):
+        return False
+    # 冒號會讓它看起來像另一個 scheme（http://evil）
+    if ':' in path:
         return False
     return True
+
+
+def _build_target(product_path: str) -> str:
+    """把商品路徑安全地接到目標網站後面，並正確編碼非 ASCII 字元。"""
+    # safe='/' 保留路徑分隔符號，其餘（中文、空白等）轉成百分比編碼
+    encoded = quote(product_path, safe='/')
+    return f"{Config.REDIRECT_TARGET}/{encoded}"
 
 
 def _source_from_request():
@@ -85,9 +105,10 @@ def redirect_product(short_code, product_path):
 
     if not _is_safe_product_path(product_path):
         # 路徑不安全就退回首頁，仍然帶上推薦碼，不影響歸因
+        print(f"[REDIRECT] 拒絕不安全的商品路徑: {product_path!r}")
         return redirect(f"{Config.REDIRECT_TARGET}?ref={affiliate['ref_code']}")
 
-    target_url = f"{Config.REDIRECT_TARGET}/{product_path}"
+    target_url = _build_target(product_path)
     record_click(
         affiliate_id=affiliate['id'],
         ip_address=request.remote_addr,
